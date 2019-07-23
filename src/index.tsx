@@ -1,6 +1,20 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-import App from "./App";
+import {AuthHandler} from './sdk/auth';
+import {initPlayback} from './sdk/playback';
 
-ReactDOM.render(<App />, document.getElementById("root"));
+import App from './App';
+
+const render = () => ReactDOM.render(<App />, document.getElementById('root'));
+
+try {
+  if (AuthHandler.isLoggedIn()) {
+    initPlayback();
+    render();
+  } else {
+    AuthHandler.login();
+  }
+} catch (error) {
+  alert(error);
+}

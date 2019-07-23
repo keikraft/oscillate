@@ -1,7 +1,19 @@
-import React from "react";
+import React from 'react';
+import {createGlobalStyle} from 'styled-components';
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: black;
+  }
+`;
 
 const App: React.FC = () => {
-  return <div className="App" />;
+  return (
+    <>
+      <GlobalStyle />
+      <div />
+    </>
+  );
 };
 
 export default App;
