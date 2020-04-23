@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import {AuthHandler} from './sdk/auth';
-import {initPlayback} from './sdk/playback';
+import {AuthHandler} from 'sdk/auth';
 
 import App from './App';
 
@@ -10,7 +9,6 @@ const render = () => ReactDOM.render(<App />, document.getElementById('root'));
 
 try {
   if (AuthHandler.isLoggedIn()) {
-    initPlayback();
     render();
   } else {
     AuthHandler.login();

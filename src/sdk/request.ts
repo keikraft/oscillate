@@ -1,3 +1,5 @@
+import {AuthHandler} from './auth';
+
 type RequestMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
 export interface RequestParams {
@@ -17,17 +19,13 @@ export async function request<T>({
 }: RequestParams): Promise<T> {
   const searchParams = params ? `?${new URLSearchParams(params)}` : '';
   const url = new URL(searchParams, new URL(path, window.location.href));
-  const isFormData = payload instanceof FormData;
 
   const defaultHeaders: HeadersInit = {};
+  defaultHeaders['Accept'] = 'application/json';
+  defaultHeaders['Content-Type'] = 'application/json';
 
-  if (!isFormData) {
-    defaultHeaders['Content-Type'] = 'application/json;charset=UTF-8';
-  }
-
-  const bearer = localStorage.getItem('access_token');
-  const body = payload && (isFormData ? (payload as FormData) : JSON.stringify(payload));
-  defaultHeaders.Authorization = `Bearer ${bearer}`;
+  const body = payload && JSON.stringify(payload);
+  defaultHeaders.Authorization = `Bearer ${AuthHandler.getToken()}`;
 
   const resp = await fetch(url.href, {
     method,
