@@ -2,7 +2,8 @@ import React from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
 
 import {Canvas} from 'components/Canvas';
-import {UriField} from 'components/UriField';
+import {PlayTrack} from 'components/PlayTrack';
+import {PlayerProvider} from 'context/PlayerContext';
 
 const GlobalStyle = createGlobalStyle`
   html, body, #root {
@@ -26,10 +27,12 @@ const App: React.FC = () => {
   return (
     <>
       <GlobalStyle />
-      <UriField />
-      <Content>
-        <Canvas />
-      </Content>
+      <PlayerProvider>
+        <PlayTrack />
+        <Content>
+          <Canvas />
+        </Content>
+      </PlayerProvider>
     </>
   );
 };

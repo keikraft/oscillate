@@ -19,6 +19,10 @@ class Auth {
   }
 
   login() {
+    if (this.isLoggedIn()) {
+      return localStorage.getItem(LOCALSTORAGE_TOKEN_KEY);
+    }
+
     const state = this.generateRandomString(16);
     const scope = 'streaming user-read-email user-read-private';
     localStorage.setItem(LOCALSTORAGE_AUTH_STATE_KEY, state);
@@ -57,6 +61,16 @@ class Auth {
     }
 
     return false;
+  }
+
+  getToken() {
+    const token = localStorage.getItem(LOCALSTORAGE_TOKEN_KEY);
+    const tokenExpires = localStorage.getItem(LOCALSTORAGE_TOKEN_EXPIRES_KEY);
+    if (token && tokenExpires && parseInt(tokenExpires, 10) > Date.now()) {
+      return localStorage.getItem(LOCALSTORAGE_TOKEN_KEY);
+    } else {
+      this.login();
+    }
   }
 }
 
