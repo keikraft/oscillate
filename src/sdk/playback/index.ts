@@ -1,46 +1,69 @@
-export const initPlayback = () => {
-  // @ts-ignore
-  window.onSpotifyWebPlaybackSDKReady = () => {
-    const token = localStorage.getItem('access_token');
-    // @ts-ignore
-    // eslint-disable-next-line no-undef
-    const player = new Spotify.Player({
-      name: 'Web Playback SDK Quick Start Player',
-      getOAuthToken: (cb: any) => {
-        cb(token);
+import {AuthHandler} from 'sdk/auth';
+import {request} from 'sdk/request';
+
+class Playback {
+  player: Spotify.SpotifyPlayer | undefined;
+  deviceId: string = '';
+
+  constructor() {
+    this.init();
+  }
+
+  play(uri: string) {
+    fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.deviceId}`, {
+      method: 'PUT',
+      body: JSON.stringify({uris: [uri]}),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${AuthHandler.getToken()}`,
       },
     });
+  }
 
-    // Error handling
-    player.addListener('initialization_error', ({message}: any) => {
-      console.error(message);
-    });
-    player.addListener('authentication_error', ({message}: any) => {
-      console.error(message);
-    });
-    player.addListener('account_error', ({message}: any) => {
-      console.error(message);
-    });
-    player.addListener('playback_error', ({message}: any) => {
-      console.error(message);
-    });
+  init() {
+    // @ts-ignore
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      this.player = new Spotify.Player({
+        name: 'Web Playback SDK Quick Start Player',
+        getOAuthToken: (cb: any) => {
+          cb(AuthHandler.getToken());
+        },
+      });
 
-    // Playback status updates
-    player.addListener('player_state_changed', (state: any) => {
-      console.log(state);
-    });
+      // Error handling
+      this.player.addListener('initialization_error', ({message}: any) => {
+        console.error(message);
+      });
+      this.player.addListener('authentication_error', ({message}: any) => {
+        console.error(message);
+      });
+      this.player.addListener('account_error', ({message}: any) => {
+        console.error(message);
+      });
+      this.player.addListener('playback_error', ({message}: any) => {
+        console.error(message);
+      });
 
-    // Ready
-    player.addListener('ready', ({device_id}: any) => {
-      console.log('Ready with Device ID', device_id);
-    });
+      // Playback status updates
+      // this.player.addListener('player_state_changed', (state: any) => {
+      //   console.log(state);
+      // });
 
-    // Not Ready
-    player.addListener('not_ready', ({device_id}: any) => {
-      console.log('Device ID has gone offline', device_id);
-    });
+      // Ready
+      this.player.addListener('ready', ({device_id}: any) => {
+        console.log('Ready with Device ID', device_id);
+        this.deviceId = device_id;
+      });
 
-    // Connect to the player!
-    player.connect();
-  };
-};
+      // Not Ready
+      this.player.addListener('not_ready', ({device_id}: any) => {
+        console.log('Device ID has gone offline', device_id);
+      });
+
+      // Connect to the player!
+      this.player.connect();
+    };
+  }
+}
+
+export const PlaybackHandler = new Playback();

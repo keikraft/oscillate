@@ -17,10 +17,10 @@ const GlobalStyle = createGlobalStyle`
 `;
 const Content = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
 `;
 
 const App: React.FC = () => {
@@ -28,8 +28,8 @@ const App: React.FC = () => {
     <>
       <GlobalStyle />
       <PlayerProvider>
-        <PlayTrack />
         <Content>
+          <PlayTrack />
           <Canvas />
         </Content>
       </PlayerProvider>
