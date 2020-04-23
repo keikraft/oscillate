@@ -1,5 +1,4 @@
 import {AuthHandler} from 'sdk/auth';
-import {request} from 'sdk/request';
 
 class Playback {
   player: Spotify.SpotifyPlayer | undefined;
@@ -43,11 +42,6 @@ class Playback {
       this.player.addListener('playback_error', ({message}: any) => {
         console.error(message);
       });
-
-      // Playback status updates
-      // this.player.addListener('player_state_changed', (state: any) => {
-      //   console.log(state);
-      // });
 
       // Ready
       this.player.addListener('ready', ({device_id}: any) => {
