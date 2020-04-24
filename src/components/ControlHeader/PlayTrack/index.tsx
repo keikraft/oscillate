@@ -2,34 +2,26 @@ import React from 'react';
 import styled from 'styled-components';
 
 import {searchTrackRecommendations} from 'sdk/search';
-import {usePlayer} from 'context/PlayerContext';
+import {usePlayback} from 'context/PlaybackContext';
+
+import {Button} from 'components/Button';
 
 const FieldWrapper = styled.div`
+  flex: 1;
   display: flex;
   justify-content: center;
 `;
-const PlayTrackButton = styled.button`
+const PlayTrackButton = styled(Button)`
   padding: 8px 16px;
-  font-size: 16px;
-  color: lightgray;
-  background-color: transparent;
   border: 1px solid gray;
   border-radius: 8px;
-  cursor: pointer;
-  outline: none;
-
   &:hover {
-    color: white;
     border: 1px solid white;
-    transform: scale(1.025);
-  }
-  &:active {
-    transform: scale(1);
   }
 `;
 
 export const PlayTrack: React.FC = () => {
-  const [, dispatch] = usePlayer();
+  const [, dispatch] = usePlayback();
 
   const handlePlayTrack = async () => {
     const data = await searchTrackRecommendations();
@@ -39,7 +31,7 @@ export const PlayTrack: React.FC = () => {
 
   return (
     <FieldWrapper>
-      <PlayTrackButton onClick={handlePlayTrack}>PLAY TRACK</PlayTrackButton>
+      <PlayTrackButton onClick={handlePlayTrack}>plAy</PlayTrackButton>
     </FieldWrapper>
   );
 };
