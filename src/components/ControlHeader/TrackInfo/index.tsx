@@ -2,13 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 
 import {usePlayback} from 'context/PlaybackContext';
+import {secondaryColor} from 'components/GlobalStyles';
 
 const TrackInfoWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  color: rgba(255, 255, 255, 0.5);
+  color: ${secondaryColor};
   font-size: 14px;
   line-height: 16px;
 `;

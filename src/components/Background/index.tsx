@@ -15,7 +15,7 @@ const BackgroundWrapper = styled.div`
 `;
 const BackgroundTitle = styled.span`
   font-family: inherit;
-  font-size: 14vw;
+  font-size: 14.5vw;
   color: rgba(255, 255, 255, 0.1);
 `;
 
