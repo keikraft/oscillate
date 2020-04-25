@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {MenuHeader} from './MenuHeader';
 import {MenuContent} from './MenuContent';
 import {MenuFooter} from './MenuFooter';
+import {secondaryColor} from 'components/GlobalStyles';
 
 const SettingsMenuContainer = styled.div<{isOpen: boolean}>`
   position: fixed;
@@ -12,8 +13,12 @@ const SettingsMenuContainer = styled.div<{isOpen: boolean}>`
   left: 0;
   display: flex;
   flex-direction: column;
-  padding: 48px;
+  padding: 48px 24px;
   width: 248px;
+  border-top: 1px solid ${secondaryColor};
+  border-right: 1px solid ${secondaryColor};
+  border-bottom: 1px solid ${secondaryColor};
+  border-radius: 0 8px 8px 0;
   background-color: black;
   transform: ${({isOpen}) => (isOpen ? 'translateX(0)' : 'translateX(-100%)')};
   transition: transform 250ms ease-in-out;

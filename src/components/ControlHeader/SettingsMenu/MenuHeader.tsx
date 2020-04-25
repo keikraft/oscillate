@@ -8,7 +8,7 @@ const SettingsMenuHeader = styled.div`
   position: relative;
 `;
 const SettingsTitle = styled.h2`
-  margin-top: 0;
+  margin: 0;
   color: ${secondaryColor};
 `;
 const CloseButton = styled(Button)`
