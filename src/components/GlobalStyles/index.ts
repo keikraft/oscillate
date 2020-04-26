@@ -1,7 +1,7 @@
 import {createGlobalStyle} from 'styled-components';
 
 export const primaryColor = 'rgba(255,255,255,0.8)';
-export const secondaryColor = 'rgba(255,255,255,0.4)';
+export const secondaryColor = 'rgba(255,255,255,0.5)';
 
 export const GlobalStyle = createGlobalStyle`
   html, body, #root {

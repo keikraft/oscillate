@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import {SettingsProvider} from 'context/SettingsContext';
+
 import {SettingsButton} from './SettingsButton';
 import {SettingsMenu} from './SettingsMenu';
 import {PlayTrack} from './PlayTrack';
@@ -14,12 +16,15 @@ const HeaderWrapper = styled.div`
 
 export const ControlHeader = () => {
   const [isSettingsOpen, setSettingsOpen] = React.useState(false);
+
   return (
-    <HeaderWrapper>
-      <SettingsMenu isOpen={isSettingsOpen} onClose={() => setSettingsOpen(false)} />
-      <SettingsButton onOpen={() => setSettingsOpen(true)} />
-      <PlayTrack />
-      <TrackInfo />
-    </HeaderWrapper>
+    <SettingsProvider>
+      <HeaderWrapper>
+        <SettingsMenu isOpen={isSettingsOpen} onClose={() => setSettingsOpen(false)} />
+        <SettingsButton onOpen={() => setSettingsOpen(true)} />
+        <PlayTrack />
+        <TrackInfo />
+      </HeaderWrapper>
+    </SettingsProvider>
   );
 };

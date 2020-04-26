@@ -9,15 +9,18 @@ const SliderWrapper = styled.div`
   margin-bottom: 48px;
 `;
 const SliderLabel = styled.label`
-  margin-bottom: 8px;
   color: ${secondaryColor};
   font-size: 14px;
+`;
+const SliderValue = styled.span`
+  color: ${secondaryColor};
+  font-size: 12px;
 `;
 const StyledSlider = styled.input`
   -webkit-appearance: none;
   width: 100%;
   height: 1px;
-  margin: 10px 0;
+  margin: 16px 0;
   background-color: ${secondaryColor};
   outline: none;
   cursor: pointer;
@@ -63,6 +66,7 @@ type SliderProps = {
   max: number;
   step: number;
   value: number;
+  unit?: string;
   onChange: (value: string) => void;
 };
 
@@ -72,6 +76,7 @@ export const Slider: React.FC<SliderProps> = ({
   max = 100,
   step = 1,
   value = 0,
+  unit = '',
   onChange,
 }) => {
   return (
@@ -85,6 +90,7 @@ export const Slider: React.FC<SliderProps> = ({
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />
+      <SliderValue>{`${value}${unit}`}</SliderValue>
     </SliderWrapper>
   );
 };

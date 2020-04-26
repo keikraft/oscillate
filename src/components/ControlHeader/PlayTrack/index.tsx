@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {searchTrackRecommendations} from 'sdk/search';
+import {getTrackRecommendations} from 'sdk/recommendations';
 import {usePlayback} from 'context/PlaybackContext';
+import {useSettings} from 'context/SettingsContext';
 
 import {Button} from 'components/Button';
 import {primaryColor, secondaryColor} from 'components/GlobalStyles';
@@ -23,11 +24,14 @@ const PlayTrackButton = styled(Button)`
 
 export const PlayTrack: React.FC = () => {
   const [, dispatch] = usePlayback();
+  const [settingsState] = useSettings();
 
   const handlePlayTrack = async () => {
-    const data = await searchTrackRecommendations();
-    const randomIndex = Math.floor(Math.random() * Math.floor(data.tracks.length));
-    dispatch({type: 'PLAY_TRACK', track: data.tracks[randomIndex]});
+    const data = await getTrackRecommendations(settingsState);
+    if (data.tracks.length) {
+      const randomIndex = Math.floor(Math.random() * Math.floor(data.tracks.length));
+      dispatch({type: 'PLAY_TRACK', track: data.tracks[randomIndex]});
+    }
   };
 
   return (
