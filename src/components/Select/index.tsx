@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactSelect, {Props, StylesConfig} from 'react-select';
+import ReactSelect, {Props, StylesConfig, Theme} from 'react-select';
 import styled from 'styled-components';
 
 import {secondaryColor, primaryColor} from 'components/GlobalStyles';
@@ -23,6 +23,7 @@ const customStyles: StylesConfig = {
     backgroundColor: 'transparent',
     border: `1px solid ${secondaryColor}`,
     borderRadius: '8px',
+    boxShadow: 'none',
   }),
   placeholder: (provided: any) => ({
     ...provided,
@@ -64,6 +65,13 @@ const customStyles: StylesConfig = {
     textTransform: 'lowercase',
   }),
 };
+const customTheme = (theme: Theme) => ({
+  ...theme,
+  colors: {
+    ...theme.colors,
+    primary: secondaryColor,
+  },
+});
 
 type SelectProps = {
   label: string;
@@ -73,17 +81,7 @@ export const Select: React.FC<SelectProps> = ({label, ...rest}) => {
   return (
     <SelectWrapper>
       <SelectLabel>{label}</SelectLabel>
-      <ReactSelect
-        {...rest}
-        styles={customStyles}
-        theme={(theme) => ({
-          ...theme,
-          colors: {
-            ...theme.colors,
-            primary: secondaryColor,
-          },
-        })}
-      />
+      <ReactSelect {...rest} styles={customStyles} theme={customTheme} />
     </SelectWrapper>
   );
 };
