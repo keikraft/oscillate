@@ -3,6 +3,10 @@ import styled from 'styled-components';
 
 const CanvasWrapper = styled.div`
   flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 `;
 const StyledCanvas = styled.canvas`
   width: 1440;
