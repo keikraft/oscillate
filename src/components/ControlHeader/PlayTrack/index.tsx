@@ -7,6 +7,7 @@ import {useSettings} from 'context/SettingsContext';
 
 import {Button} from 'components/Button';
 import {primaryColor, secondaryColor} from 'components/GlobalStyles';
+import {getTrackAnalysis} from 'sdk/analysis';
 
 const FieldWrapper = styled.div`
   flex: 1;
@@ -30,7 +31,11 @@ export const PlayTrack: React.FC = () => {
     const data = await getTrackRecommendations(settingsState);
     if (data.tracks.length) {
       const randomIndex = Math.floor(Math.random() * Math.floor(data.tracks.length));
-      dispatch({type: 'PLAY_TRACK', track: data.tracks[randomIndex]});
+      const track = data.tracks[randomIndex];
+      dispatch({type: 'PLAY_TRACK', track});
+      getTrackAnalysis(track.id).then((trackAnalysis) =>
+        dispatch({type: 'SET_TRACK_ANALYSIS', trackAnalysis}),
+      );
     }
   };
 

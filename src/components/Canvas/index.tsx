@@ -1,44 +1,45 @@
 import React from 'react';
 import styled from 'styled-components';
+import {usePlayback} from 'context/PlaybackContext';
+
+const SIDE_PADDING = 48;
 
 const CanvasWrapper = styled.div`
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding: 0 ${SIDE_PADDING}px;
   overflow: hidden;
 `;
 const StyledCanvas = styled.canvas`
-  width: 1440;
-  height: 900;
+  width: 1440px;
+  height: 900px;
 `;
 
 export const Canvas: React.FC = () => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const [state] = usePlayback();
 
-  const draw = () => {
-    if (canvasRef.current && canvasRef.current.getContext) {
+  const drawSegments = React.useCallback(() => {
+    if (canvasRef.current && canvasRef.current.getContext && state.trackAnalysis.segments) {
       var ctx = canvasRef.current.getContext('2d');
       if (ctx) {
-        ctx.fillStyle = 'orange';
-        // Filled triangle
-        ctx.beginPath();
-        ctx.moveTo(25, 25);
-        ctx.lineTo(105, 25);
-        ctx.lineTo(25, 105);
-        ctx.fill();
+        ctx.fillStyle = 'yellow';
 
-        // Stroked triangle
-        ctx.beginPath();
-        ctx.moveTo(125, 125);
-        ctx.lineTo(125, 45);
-        ctx.lineTo(45, 125);
-        ctx.closePath();
-        ctx.stroke();
+        const {segments} = state.trackAnalysis;
+        const segmentTruncation = Math.max(2, Math.min(Math.floor(segments.length / 500), 4));
+        const segmentWidth = canvasRef.current.width / (segments.length / segmentTruncation);
+
+        for (let i = 0; i < segments.length / segmentTruncation; i += segmentTruncation) {
+          const segmentHeight = segments[i].loudness_max - segments[i].loudness_start;
+          ctx.fillRect(i * segmentWidth, 100, segmentWidth * segmentTruncation - 2, segmentHeight);
+          ctx.fillRect(i * segmentWidth, 100, segmentWidth * segmentTruncation - 2, -segmentHeight);
+        }
       }
     }
-  };
+  }, [state.trackAnalysis]);
 
   const fixCanvasAspectRatio = React.useCallback(() => {
     if (containerRef.current && canvasRef.current) {
@@ -47,19 +48,28 @@ export const Canvas: React.FC = () => {
         containerRef.current.clientHeight / canvasRef.current.height,
       );
 
-      canvasRef.current.setAttribute('width', `${canvasRef.current.width * ratio}`);
-      canvasRef.current.setAttribute('height', `${canvasRef.current.height * ratio}`);
-      draw();
+      const width = canvasRef.current.width * ratio - SIDE_PADDING * 2;
+      const height = canvasRef.current.height * ratio;
+      canvasRef.current.setAttribute('width', `${width}`);
+      canvasRef.current.setAttribute('height', `${height}`);
+      console.log('fix');
+      drawSegments();
     }
-  }, [containerRef, canvasRef]);
+  }, [containerRef, canvasRef, drawSegments]);
 
-  React.useEffect(() => fixCanvasAspectRatio(), [containerRef, canvasRef, fixCanvasAspectRatio]);
+  React.useEffect(() => {
+    if (state.trackAnalysis.segments) {
+      drawSegments();
+    }
+  }, [state.trackAnalysis, drawSegments]);
+
+  React.useLayoutEffect(() => fixCanvasAspectRatio(), [fixCanvasAspectRatio]);
 
   React.useEffect(() => {
     window.addEventListener('resize', fixCanvasAspectRatio);
 
     return () => window.removeEventListener('resize', fixCanvasAspectRatio);
-  }, []);
+  }, [fixCanvasAspectRatio]);
 
   return (
     <CanvasWrapper ref={containerRef}>
