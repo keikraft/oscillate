@@ -1,15 +1,18 @@
 import {AuthHandler} from 'sdk/auth';
 
+type PlaybackListenerHandler = (state: Spotify.PlaybackState) => void;
+
 class Playback {
   player: Spotify.SpotifyPlayer | undefined;
   deviceId: string = '';
+  listeners = new Set<PlaybackListenerHandler>();
 
   constructor() {
     this.init();
   }
 
   play(uri: string) {
-    fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.deviceId}`, {
+    return fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.deviceId}`, {
       method: 'PUT',
       body: JSON.stringify({uris: [uri]}),
       headers: {
@@ -54,9 +57,22 @@ class Playback {
         console.log('Device ID has gone offline', device_id);
       });
 
+      // Player State
+      this.player.addListener('player_state_changed', (state) => {
+        this.listeners.forEach((listener) => listener(state));
+      });
+
       // Connect to the player!
       this.player.connect();
     };
+  }
+
+  public listen(handler: PlaybackListenerHandler) {
+    this.listeners.add(handler);
+  }
+
+  public removeListener(handler: PlaybackListenerHandler) {
+    this.listeners.delete(handler);
   }
 }
 

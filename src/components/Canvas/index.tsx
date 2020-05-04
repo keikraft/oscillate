@@ -20,6 +20,7 @@ const StyledCanvas = styled.canvas`
 export const Canvas: React.FC = () => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const requestRef = React.useRef<number>();
   const [state] = usePlayback();
 
   const drawSegments = React.useCallback(() => {
@@ -41,6 +42,17 @@ export const Canvas: React.FC = () => {
     }
   }, [state.trackAnalysis]);
 
+  const drawBeats = (time: DOMHighResTimeStamp) => {
+    console.log(time);
+    // if (canvasRef.current && canvasRef.current.getContext && state.trackAnalysis.beats) {
+    //   var ctx = canvasRef.current.getContext('2d');
+    //   if (ctx) {
+    //     ctx.fillStyle = 'purple';
+    //   }
+    // }
+    // window.requestAnimationFrame(drawBeats);
+  };
+
   const fixCanvasAspectRatio = React.useCallback(() => {
     if (containerRef.current && canvasRef.current) {
       const ratio = Math.min(
@@ -53,23 +65,27 @@ export const Canvas: React.FC = () => {
       canvasRef.current.setAttribute('width', `${width}`);
       canvasRef.current.setAttribute('height', `${height}`);
 
-      drawSegments();
+      // drawSegments();
     }
-  }, [containerRef, canvasRef, drawSegments]);
+  }, [containerRef, canvasRef]);
 
   React.useEffect(() => {
     if (state.trackAnalysis.segments) {
-      drawSegments();
+      // drawSegments();
     }
-  }, [state.trackAnalysis, drawSegments]);
+  }, [state.trackAnalysis]);
 
   React.useLayoutEffect(() => fixCanvasAspectRatio(), [fixCanvasAspectRatio]);
 
   React.useEffect(() => {
     window.addEventListener('resize', fixCanvasAspectRatio);
+    requestRef.current = requestAnimationFrame(drawBeats);
 
-    return () => window.removeEventListener('resize', fixCanvasAspectRatio);
-  }, [fixCanvasAspectRatio]);
+    return () => {
+      window.removeEventListener('resize', fixCanvasAspectRatio);
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
+  }, [fixCanvasAspectRatio, drawBeats]);
 
   return (
     <CanvasWrapper ref={containerRef}>

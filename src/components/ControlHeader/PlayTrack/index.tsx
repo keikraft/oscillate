@@ -2,12 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 
 import {getTrackRecommendations} from 'sdk/recommendations';
+import {getTrackAnalysis} from 'sdk/analysis';
+import {PlaybackHandler} from 'sdk/playback';
 import {usePlayback} from 'context/PlaybackContext';
 import {useSettings} from 'context/SettingsContext';
 
 import {Button} from 'components/Button';
 import {primaryColor, secondaryColor} from 'components/GlobalStyles';
-import {getTrackAnalysis} from 'sdk/analysis';
 
 const FieldWrapper = styled.div`
   flex: 1;
@@ -29,10 +30,13 @@ export const PlayTrack: React.FC = () => {
 
   const handlePlayTrack = async () => {
     const data = await getTrackRecommendations(settingsState);
-    if (data.tracks.length) {
+    if (data.tracks?.length) {
       const randomIndex = Math.floor(Math.random() * Math.floor(data.tracks.length));
       const track = data.tracks[randomIndex];
       dispatch({type: 'PLAY_TRACK', track});
+
+      PlaybackHandler.play(track.uri).then(() => dispatch({type: 'SET_PLAY_TIME_START'}));
+
       getTrackAnalysis(track.id).then((trackAnalysis) =>
         dispatch({type: 'SET_TRACK_ANALYSIS', trackAnalysis}),
       );

@@ -20,7 +20,7 @@ export const getTrackRecommendations = async ({
   valence,
 }: TrackRecommendationAttributes) => {
   const params = {
-    limit: '10',
+    limit: '100',
     seed_genres: genre,
     target_danceability: `${danceability / 100}`,
     target_energy: `${energy / 100}`,
