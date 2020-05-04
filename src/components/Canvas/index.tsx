@@ -44,15 +44,15 @@ export const Canvas: React.FC = () => {
   const fixCanvasAspectRatio = React.useCallback(() => {
     if (containerRef.current && canvasRef.current) {
       const ratio = Math.min(
-        containerRef.current.clientWidth / canvasRef.current.width,
+        (containerRef.current.clientWidth - SIDE_PADDING * 2) / canvasRef.current.width,
         containerRef.current.clientHeight / canvasRef.current.height,
       );
 
-      const width = canvasRef.current.width * ratio - SIDE_PADDING * 2;
-      const height = canvasRef.current.height * ratio;
+      const width = Math.trunc(canvasRef.current.width * ratio);
+      const height = Math.trunc(canvasRef.current.height * ratio);
       canvasRef.current.setAttribute('width', `${width}`);
       canvasRef.current.setAttribute('height', `${height}`);
-      console.log('fix');
+
       drawSegments();
     }
   }, [containerRef, canvasRef, drawSegments]);
