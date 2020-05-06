@@ -44,7 +44,7 @@ const reducer = (state: PlaybackState, action: Action): PlaybackState => {
       console.log(action.trackAnalysis);
       return {...state, trackAnalysis: action.trackAnalysis};
     case 'SET_PLAY_TIME_START':
-      return {...state, timeStart: Date.now()};
+      return {...state, timeStart: performance.now()};
     default:
       return state;
   }

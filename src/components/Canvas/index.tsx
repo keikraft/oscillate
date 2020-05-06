@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import {usePlayback} from 'context/PlaybackContext';
+
+import {BeatsAnimation} from 'components/Animations/BeatsAnimation';
 
 const SIDE_PADDING = 48;
 
@@ -12,46 +13,10 @@ const CanvasWrapper = styled.div`
   padding: 0 ${SIDE_PADDING}px;
   overflow: hidden;
 `;
-const StyledCanvas = styled.canvas`
-  width: 1440px;
-  height: 900px;
-`;
 
 export const Canvas: React.FC = () => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const requestRef = React.useRef<number>();
-  const [state] = usePlayback();
-
-  const drawSegments = React.useCallback(() => {
-    if (canvasRef.current && canvasRef.current.getContext && state.trackAnalysis.segments) {
-      var ctx = canvasRef.current.getContext('2d');
-      if (ctx) {
-        ctx.fillStyle = 'yellow';
-
-        const {segments} = state.trackAnalysis;
-        const segmentTruncation = Math.max(2, Math.min(Math.floor(segments.length / 500), 4));
-        const segmentWidth = canvasRef.current.width / (segments.length / segmentTruncation);
-
-        for (let i = 0; i < segments.length / segmentTruncation; i += segmentTruncation) {
-          const segmentHeight = segments[i].loudness_max - segments[i].loudness_start;
-          ctx.fillRect(i * segmentWidth, 100, segmentWidth * segmentTruncation - 2, segmentHeight);
-          ctx.fillRect(i * segmentWidth, 100, segmentWidth * segmentTruncation - 2, -segmentHeight);
-        }
-      }
-    }
-  }, [state.trackAnalysis]);
-
-  const drawBeats = (time: DOMHighResTimeStamp) => {
-    console.log(time);
-    // if (canvasRef.current && canvasRef.current.getContext && state.trackAnalysis.beats) {
-    //   var ctx = canvasRef.current.getContext('2d');
-    //   if (ctx) {
-    //     ctx.fillStyle = 'purple';
-    //   }
-    // }
-    // window.requestAnimationFrame(drawBeats);
-  };
 
   const fixCanvasAspectRatio = React.useCallback(() => {
     if (containerRef.current && canvasRef.current) {
@@ -64,32 +29,21 @@ export const Canvas: React.FC = () => {
       const height = Math.trunc(canvasRef.current.height * ratio);
       canvasRef.current.setAttribute('width', `${width}`);
       canvasRef.current.setAttribute('height', `${height}`);
-
-      // drawSegments();
     }
   }, [containerRef, canvasRef]);
-
-  React.useEffect(() => {
-    if (state.trackAnalysis.segments) {
-      // drawSegments();
-    }
-  }, [state.trackAnalysis]);
 
   React.useLayoutEffect(() => fixCanvasAspectRatio(), [fixCanvasAspectRatio]);
 
   React.useEffect(() => {
     window.addEventListener('resize', fixCanvasAspectRatio);
-    requestRef.current = requestAnimationFrame(drawBeats);
 
-    return () => {
-      window.removeEventListener('resize', fixCanvasAspectRatio);
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
-    };
-  }, [fixCanvasAspectRatio, drawBeats]);
+    return () => window.removeEventListener('resize', fixCanvasAspectRatio);
+  }, [fixCanvasAspectRatio]);
 
   return (
     <CanvasWrapper ref={containerRef}>
-      <StyledCanvas ref={canvasRef} />
+      <canvas ref={canvasRef} style={{width: '1440px', height: '900px'}} />
+      <BeatsAnimation />
     </CanvasWrapper>
   );
 };
